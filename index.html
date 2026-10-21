@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>两室一厅 · 3D 户型可视化</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+  <canvas id="scene"></canvas>
+  <div id="labels"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9.5 21v-6h5v6"/></svg>
+      </div>
+      <div class="brand-txt">
+        <h1>两室一厅 · 三维户型</h1>
+        <p>9.20 m × 10.33 m ｜ 套内净面积 <b>85.6 ㎡</b></p>
+      </div>
+    </div>
+    <div class="badges">
+      <span>两室两卫</span><span>客餐厅</span><span>南北通透</span><span>生活阳台</span>
+    </div>
+  </header>
+
+  <aside class="panel" id="panel">
+    <button class="panel-toggle" id="panelToggle" title="收起/展开">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+
+    <section>
+      <h2>房间导航 <em>点击聚焦</em></h2>
+      <div class="rooms" id="roomList"></div>
+    </section>
+
+    <section>
+      <h2>显示控制</h2>
+      <label class="sw"><input type="checkbox" id="tCut"><span class="track"></span><span class="sw-txt">剖切墙体</span></label>
+      <label class="sw"><input type="checkbox" id="tCeil"><span class="track"></span><span class="sw-txt">显示天花</span></label>
+      <label class="sw"><input type="checkbox" id="tFurn" checked><span class="track"></span><span class="sw-txt">家具陈设</span></label>
+      <label class="sw"><input type="checkbox" id="tLabel" checked><span class="track"></span><span class="sw-txt">房间标签</span></label>
+      <label class="sw"><input type="checkbox" id="tDims"><span class="track"></span><span class="sw-txt">尺寸标注链</span></label>
+      <label class="sw"><input type="checkbox" id="tNight"><span class="track"></span><span class="sw-txt">夜间灯光</span></label>
+    </section>
+
+    <section class="meta">
+      <h2>户型说明 <em>按图纸 1:1</em></h2>
+      <ul>
+        <li><b>客厅</b>6.07 × 5.81，北窗 4600，<b>西墙电视背景墙＋沙发朝西</b></li>
+        <li><b>主卧</b>2.86 × 5.96，北窗 2575，东墙＋南墙双衣柜</li>
+        <li><b>餐厅</b>3.26 × 1.41，西墙 1575 飘窗，与客厅连通</li>
+        <li><b>厨房</b>3.26 × 2.96，<b>开放式（无隔墙）</b>，西南角入户</li>
+        <li><b>次卫</b>1.45 × 2.86，南窗 540，盥洗＋马桶＋淋浴</li>
+        <li><b>次卧</b>2.38 × 2.98，南窗 1455</li>
+        <li><b>主卫</b>1.48 × 2.86，南窗 560</li>
+        <li><b>生活阳台</b>2.88 × 1.24，南端凸出体</li>
+      </ul>
+    </section>
+
+    <section class="meta dims">
+      <h2>图纸标注链 <em>mm · DXF 实测</em></h2>
+      <ul>
+        <li><b>总尺寸</b>9200（开间）× 10330（进深）</li>
+        <li><b>上（开间）</b>1535 · 225 · 1800 · 291 · 1159 · 110 · 2380 · 220 · 1480</li>
+        <li><b>左（进深）</b>1315 · 1645 · 1155 · 6215</li>
+        <li><b>下</b>3561 · 5879　<b>右</b>1269 · 2861 · 6200</li>
+        <li><b>外墙</b>240　<b>内墙</b>120　<b>阳台凸出</b>1241</li>
+      </ul>
+    </section>
+  </aside>
+
+  <nav class="dock">
+    <button data-view="overview" class="active">全景</button>
+    <button data-view="top">俯视平面</button>
+    <button data-view="front">正立面</button>
+    <button data-view="corner">对角鸟瞰</button>
+    <span class="sep"></span>
+    <button id="btnWalk" class="accent">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="2"/><path d="M12 9l-2 5 3 2 1 5"/><path d="M10 14l-3 1-1 5"/><path d="M12 9l4 2 2 3"/></svg>
+      室内漫游
+    </button>
+  </nav>
+
+  <div class="hint">
+    <kbd>左键</kbd> 旋转 &nbsp;·&nbsp; <kbd>滚轮</kbd> 缩放 &nbsp;·&nbsp; <kbd>右键</kbd> 平移 &nbsp;·&nbsp; <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> 视角
+  </div>
+
+  <div id="walkTip"><b>W A S D</b> 移动 &nbsp;·&nbsp; <b>鼠标</b> 转头 &nbsp;·&nbsp; <b>Shift</b> 加速 &nbsp;·&nbsp; <b>ESC</b> 退出</div>
+
+  <div id="loading"><div class="spin"></div><p>正在构建三维户型…</p></div>
+</div>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="js/materials.js"></script>
+<script src="js/furniture.js"></script>
+<script src="js/plan.js"></script>
+<script src="js/build.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
